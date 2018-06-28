@@ -10,6 +10,13 @@ router.get('/', (req, res) => {
 
 router.route('/schedule/:room_id').get((req, res) => {
     console.log('GET request.params:', req.params);
+    res.json([{
+        id: 1,
+        title: "HR & Technical Interview",
+        contact: "Alper Tunga Gülbahar",
+        start: "2018-06-20T10:00:00.000Z",
+        end: "2018-06-20T11:00:00.000Z"
+    }])
 }).post((req, res) => {
     console.log('POST request.params:', req.params);
 });
