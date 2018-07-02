@@ -82,16 +82,16 @@ module.exports = (app, express) => {
         success: true
       })
       // Store the token to disk for later program executions
-      // try {
-      //   fs.writeFileSync(CREDENTIALS_PATH, JSON.stringify(token));
-      //   console.log('Token stored to', CREDENTIALS_PATH);
-      // } catch (err) {
-      //   console.error(err);
-      //   res.status = 500
-      //   res.json({
-      //     error: err
-      //   })
-      // }
+      try {
+        fs.writeFileSync(CREDENTIALS_PATH, JSON.stringify(token));
+        console.log('Token stored to', CREDENTIALS_PATH);
+      } catch (err) {
+        console.error(err);
+        res.status = 500
+        res.json({
+          error: err
+        })
+      }
     });
   })
 
