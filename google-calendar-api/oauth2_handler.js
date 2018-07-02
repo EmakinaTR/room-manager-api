@@ -55,7 +55,8 @@ module.exports = (app, express) => {
       if (token === undefined) {
         redirectToAuthentication(oAuth2Client, res)
       } else {
-        oAuth2Client.setCredentials(token);
+        oAuth2Client.setCredentials(token)
+        req.oauth2 = oAuth2Client
         next();
       }
     } else {
