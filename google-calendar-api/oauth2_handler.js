@@ -1,7 +1,5 @@
 const fs = require('fs')
-const {
-  google
-} = require('googleapis')
+const { google } = require('googleapis')
 const CREDENTIALS_PATH = './google-calendar-api/GOOGLE_APPLICATION_CREDENTIALS.json'
 const SCOPES = ['https://www.googleapis.com/auth/calendar']
 const PROJECT_ID = 'crested-sentry-208712'
