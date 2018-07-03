@@ -1,17 +1,6 @@
 var express = require('express');
-var router = express.Router({
-  mergeParams: true
-});
-const {
-  google
-} = require('googleapis');
-
-router.get('/', (req, res) => {
-  res.json({
-    success: true,
-    message: 'This is the version 1 of this api.'
-  });
-})
+var router = express.Router({ mergeParams: true });
+const { google } = require('googleapis');
 
 router.route('/schedule/:room_id').get((req, res) => {
   console.log('GET request.params:', req.params);
@@ -26,15 +15,12 @@ router.route('/schedule/:room_id').get((req, res) => {
   console.log('POST request.params:', req.params);
 });
 
-router.get('/test', (req, res) => {
+router.post('/getCalenders', (req, res) => {
 
   const auth = req.oauth2
-  const calendar = google.calendar({
-    version: 'v3',
-    auth
-  });
-  const project = req.oauth2_project
-  calendar.calendarList.list((err, { data }) => {
+
+  google.calendar({ version: 'v3', auth }).calendarList.list((err, { data }) => {
+
     if (err) {
       res.status = err.status || 500
       res.json({
@@ -44,7 +30,76 @@ router.get('/test', (req, res) => {
     } else {
       res.json(data)
     }
-  })
-})
+
+  });
+
+});
+
+router.post('/getEvents', (req, res) => {
+
+  const calendarId = req.body.calendarId;
+  const startTime = new Date(req.body.startTime);
+  const endTime = new Date(req.body.endTime);
+  const auth = req.oauth2;
+
+  google.calendar({ version: 'v3', auth }).events.get({
+    calendarId: calendarId,
+    eventId: '',//it must be empty to get all events.
+    timeMin: startTime,
+    timeMax: endTime,
+    singleEvents: true,
+    orderBy: 'startTime'
+  }, (err, { data }) => {
+
+    if (err) {
+      res.status = err.status || 500
+      res.json({
+        message: err.message,
+        error: err
+      })
+    } else {
+      res.json(data)
+    }
+
+  });
+
+});
+
+router.post('/createEvent', (req, res) => {
+
+  const calendarId = req.body.calendarId;
+  const startTime = new Date(req.body.startTime);
+  const endTime = new Date(req.body.endTime);
+  const auth = req.oauth2
+
+  google.calendar({ version: 'v3', auth }).events.insert({
+    calendarId: calendarId,
+    resource: {
+      start: {
+        dateTime: startTime,
+        timeZone: "Europe/Istanbul"
+      },
+      end: {
+        dateTime: endTime,
+        timeZone: "Europe/Istanbul"
+      },
+      summary: "Test Summary",
+      description: "Test description"
+    }
+  }, (err, { data }) => {
+
+    if (err) {
+      res.status = err.status || 500
+      res.json({
+        message: err.message,
+        error: err
+      })
+    } else {
+      res.json(data)
+    }
+
+  });
+
+});
 
 module.exports = router;

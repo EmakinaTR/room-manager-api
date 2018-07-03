@@ -10,7 +10,7 @@ module.exports = (app, express) => {
   app.use((req, res, next) => {
     google.auth.getClient({
       keyFilename: CREDENTIALS_PATH,
-      scopes: ['https://www.googleapis.com/auth/calendar']
+      scopes: SCOPES
     }).then((auth) => {
       google.auth.getDefaultProjectId().then(project => {
         req.oauth2 = auth
