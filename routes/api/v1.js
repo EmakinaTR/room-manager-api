@@ -1,26 +1,25 @@
-var util = require('util')
-
 var express = require('express');
 var router = express.Router({ mergeParams: true });
 const { google } = require('googleapis');
+const moment = require('moment');
 
-router.route('/dailyMeetingRoomSchedule').post((req, res) => {
+const timeZone = "Europe/Istanbul";
+const summary = "Test Summary";
+const description = "Test description";
 
-  const calendarId = req.body.roomId;
+router.route('/getMeetings/:roomId').post((req, res) => {
 
-  const startTime = new Date();
-  startTime.setHours(0, 0, 0, 0);
-
-  const endTime = new Date();
-  endTime.setHours(23, 59, 59, 999);
-
+  const calendarId = req.params.roomId;
+  const dayStartTime = moment({hour: 0, minute: 0, seconds: 0, milliseconds: 0});
+  const dayEndTime = moment({hour: 23, minute: 59, seconds: 59, milliseconds: 999});
   const auth = req.oauth2;
 
   google.calendar({ version: 'v3', auth }).events.get({
     calendarId: calendarId,
     eventId: '',//it must be empty to get all events.
-    timeMin: startTime,
-    timeMax: endTime,
+    timeMin: dayStartTime.toDate(),
+    timeMax: dayEndTime.toDate(),
+    timeZone: timeZone,
     singleEvents: true,
     orderBy: 'startTime'
   }, (err, { data }) => {
@@ -72,41 +71,40 @@ router.post('/getCalenders', (req, res) => {
 
 });
 
-router.post('/createEvent', (req, res) => {
+router.post('/createMeeting/:roomId', (req, res) => {
 
-  const calendarId = req.body.roomId;
-  const timeInterval = req.body.timeInterval;
+  var calendarId = req.params.roomId;
+  var minutesBooked = req.body.minutesBooked;
 
-  var startTime = new Date();
-  var endTime = new Date(startTime);
-  endTime.setMinutes(startTime.getMinutes() + 30);
+  var startTime = moment();
+  var endTime = moment(startTime).add(minutesBooked, "minutes");
 
   const auth = req.oauth2
 
   checkEventAvailable({
     calendarId: calendarId,
-    startTime: startTime,
-    endTime: endTime,
+    startTime: startTime.toDate(),
+    endTime: endTime.toDate(),
     auth: auth
   }, function (result) {
 
-    if(result){
+    if (result) {
       google.calendar({ version: 'v3', auth }).events.insert({
         calendarId: calendarId,
         resource: {
           start: {
             dateTime: startTime,
-            timeZone: "Europe/Istanbul"
+            timeZone: timeZone
           },
           end: {
             dateTime: endTime,
-            timeZone: "Europe/Istanbul"
+            timeZone: timeZone
           },
-          summary: "Test Summary",
-          description: "Test description"
+          summary: summary,
+          description: description
         }
       }, (err, { data }) => {
-    
+
         if (err) {
           res.status = err.status || 500
           res.json({
@@ -114,14 +112,19 @@ router.post('/createEvent', (req, res) => {
             error: err
           })
         } else {
-          res.json(data)
+          res.json({
+            id: data.id,
+            title: data.summary == undefined ? null : data.summary,
+            contact: data.organizer.displayName == undefined ? null : data.organizer.displayName,
+            start: data.start.dateTime,
+            end: data.end.dateTime,
+          });
         }
-    
+
       });
-    }else{
-      res.json({
-        message : "The room is not available"
-      })
+    } else {
+      res.status(400);
+      res.send("The room is not available");
     }
 
   });
@@ -137,7 +140,7 @@ function checkEventAvailable(query, callback) {
     resource: {
       timeMin: query.startTime,
       timeMax: query.endTime,
-      timeZone: "Europe/Istanbul",
+      timeZone: timeZone,
       items: [{ "id": query.calendarId }]
     }
   }, (err, { data }) => {
@@ -149,9 +152,9 @@ function checkEventAvailable(query, callback) {
       callback(false);
     } else {
       var busyArray = data.calendars[query.calendarId].busy;
-      if(busyArray.length == 0){
+      if (busyArray.length == 0) {
         callback(true);
-      }else{
+      } else {
         callback(false);
       }
     }

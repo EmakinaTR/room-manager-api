@@ -12,6 +12,7 @@
     "google-auth-library": "^1.0.0",
     "googleapis": "^32.0.0",
     "http-errors": "~1.6.2",
+    "moment": "^2.14.1",
     "morgan": "~1.9.0",
     "pg": "^7.4.3"
   }
