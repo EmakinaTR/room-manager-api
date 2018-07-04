@@ -81,7 +81,7 @@ router.post('/createMeeting/:roomId', (req, res) => {
 
   const auth = req.oauth2
 
-  checkEventAvailable({
+  isRoomAvailable({
     calendarId: calendarId,
     startTime: startTime.toDate(),
     endTime: endTime.toDate(),
@@ -131,7 +131,7 @@ router.post('/createMeeting/:roomId', (req, res) => {
 
 });
 
-function checkEventAvailable(query, callback) {
+function isRoomAvailable(query, callback) {
 
   var auth = query.auth;
 
