@@ -28,9 +28,7 @@ var databaseClient = pgp(credentials);
 
 var saveCalendars = function SaveCalendars(query, callback) {
 
-    var db = pgp(credentials);
-
-    db.one('INSERT INTO kiosks(id, label, last_ip_address) VALUES($1, $2, $3) RETURNING id', ['64-00-6A-20-22-EC', 'test_1', '10.230.12.193'])
+    databaseClient.one('INSERT INTO kiosks(id, label, last_ip_address) VALUES($1, $2, $3) RETURNING id', ['64-00-6A-20-22-EC', 'test_1', '10.230.12.193'])
         .then(data => {
             console.log(data.id);
         })
@@ -38,7 +36,7 @@ var saveCalendars = function SaveCalendars(query, callback) {
             console.log('ERROR:', error);
         });
 
-    db.one('INSERT INTO calendars(id, calendar_id, kiosk_id) VALUES($1, $2, $3) RETURNING id', [1, 'relephant.nl_hha1u9iq1vn2p3u46isloi59l0@group.calendar.google.com', '64-00-6A-20-22-EC'])
+    databaseClient.one('INSERT INTO calendars(id, calendar_id, kiosk_id) VALUES($1, $2, $3) RETURNING id', [1, 'relephant.nl_hha1u9iq1vn2p3u46isloi59l0@group.calendar.google.com', '64-00-6A-20-22-EC'])
         .then(data => {
             console.log(data.id);
         })

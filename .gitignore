@@ -60,5 +60,9 @@ typings/
 # next.js build output
 .next
 
+#ignore vscode and eslint
+.vscode
+.eslintrc
+
 # This file holds critical information
 GOOGLE_APPLICATION_CREDENTIALS.json
