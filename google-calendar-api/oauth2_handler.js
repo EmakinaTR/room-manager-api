@@ -1,13 +1,13 @@
 const fs = require('fs')
 const { google } = require('googleapis')
-const CREDENTIALS_PATH = './google-calendar-api/GOOGLE_APPLICATION_CREDENTIALS.json'
+
+const CREDENTIALS = JSON.parse(process.env.GOOGLE_CALENDAR_CREDENTIALS);
 const SCOPES = ['https://www.googleapis.com/auth/calendar']
-const PROJECT_ID = 'crested-sentry-208712'
 
 module.exports = (app, express) => {
   app.use((req, res, next) => {
     google.auth.getClient({
-      keyFilename: CREDENTIALS_PATH,
+      credentials: CREDENTIALS,
       scopes: SCOPES
     }).then((auth) => {
       google.auth.getDefaultProjectId().then(project => {
@@ -17,7 +17,7 @@ module.exports = (app, express) => {
       }).catch(err => {
         console.error('Error occured while trying to fetch default project id.', err)
         req.oauth2 = auth
-        req.oauth2_project = PROJECT_ID
+        req.oauth2_project = CREDENTIALS.project_id
         next()
       })
     }).catch(err => {
