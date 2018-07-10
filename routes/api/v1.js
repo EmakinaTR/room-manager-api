@@ -41,7 +41,7 @@ router.route('/schedule/:roomId')
         return;
       }
 
-      calendarService.createMeeting(result, req.body.minutesBooked, req.oauth2, function (serviceErr, serviceRes) {
+      calendarService.createMeeting(result, req.body.minutes, req.oauth2, function (serviceErr, serviceRes) {
 
         if (serviceErr) {
           res.status(400);
