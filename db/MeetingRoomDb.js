@@ -15,16 +15,7 @@ const pgp = require('pg-promise')({
     }
 });
 
-var credentials = {
-    user: 'ravawvkonfirwo',
-    password: '72071cbd7fee3dc9d0fb37442fc07443eb8ee979a94bcf9bf9668609ed1c2d02',
-    database: 'dc4m2if5l3ha3d',
-    port: 5432,
-    host: 'ec2-54-217-250-0.eu-west-1.compute.amazonaws.com',
-    ssl: true
-};
-
-var databaseClient = pgp(credentials);
+var databaseClient = pgp(JSON.parse(process.env.DATABASE_CREDENTIALS));
 
 var saveCalendars = function SaveCalendars(query, callback) {
 
