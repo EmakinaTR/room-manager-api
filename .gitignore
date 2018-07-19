@@ -67,3 +67,6 @@ typings/
 # This file holds critical information
 GOOGLE_APPLICATION_CREDENTIALS.json
 .env
+
+# This file holds critical information
+GOOGLE_APPLICATION_CREDENTIALS.json
