@@ -1,24 +1,78 @@
 var express = require('express');
-var router = express.Router({mergeParams: true});
+var router = express.Router({ mergeParams: true });
 
-router.get('/', (req, res) => {
-    res.json({
-        success: true,
-        message: 'This is the version 1 of this api.'
+const database = require('./../../db/MeetingRoomDb');
+const calendarService = require('./../../google-calendar-api/calendar_service');
+
+router.route('/schedule/:roomId')
+  .get((req, res) => {
+
+    database.getCalendarIdByRoomId(req.params.roomId, function (error, result) {
+
+      if (error) {
+        res.status(400);
+        res.send(error);
+        return;
+      }
+
+      calendarService.getEventsByCalendarId(result, req.oauth2, function (serviceErr, serviceRes) {
+
+        if (serviceErr) {
+          res.status(400);
+          res.send(serviceRes);
+          return;
+        }
+
+        res.status(200);
+        res.json(serviceRes);
+
+      });
+
     });
-})
 
-router.route('/schedule/:room_id').get((req, res) => {
-    console.log('GET request.params:', req.params);
-    res.json([{
-        id: 1,
-        title: "HR & Technical Interview",
-        contact: "Alper Tunga Gülbahar",
-        start: "2018-06-20T10:00:00.000Z",
-        end: "2018-06-20T11:00:00.000Z"
-    }])
-}).post((req, res) => {
-    console.log('POST request.params:', req.params);
+  })
+  .post((req, res) => {
+
+    database.getCalendarIdByRoomId(req.params.roomId, function (error, result) {
+
+      if (error) {
+        res.status(400);
+        res.send(error);
+        return;
+      }
+
+      calendarService.createMeeting(result, req.body.mins, req.oauth2, function (serviceErr, serviceRes) {
+
+        if (serviceErr) {
+          res.status(400);
+          res.send(serviceErr);
+          return;
+        }
+
+        res.status(200);
+        res.json(serviceRes);
+
+      });
+
+    });
+
+  });
+
+router.post('/getCalendars', (req, res) => {
+
+  calendarService.getCalendars(req.oauth2, function (serviceErr, serviceRes) {
+
+    if (serviceErr) {
+      res.status(400);
+      res.send(serviceErr);
+      return;
+    }
+
+    res.status(200);
+    res.json(serviceRes);
+
+  });
+
 });
 
 module.exports = router;
