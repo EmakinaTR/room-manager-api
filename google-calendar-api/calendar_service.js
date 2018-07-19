@@ -2,8 +2,6 @@ const { google } = require('googleapis');
 const moment = require('moment');
 
 const timeZone = "Europe/Istanbul";
-const summary = "Test Summary";
-const description = "Test description";
 
 var getEventsByCalendarId = function getEventsByCalendarId(calendarId, auth, callback) {
 
@@ -91,8 +89,8 @@ var createMeeting = function createMeeting(calendarId, minutesBooked, auth, call
                         dateTime: endTime,
                         timeZone: timeZone
                     },
-                    summary: summary,
-                    description: description
+                    summary: "Occupied",
+                    description: "Occupied for " + minutesBooked + " mins"
                 }
             }, (err, { data }) => {
 
@@ -117,11 +115,11 @@ var createMeeting = function createMeeting(calendarId, minutesBooked, auth, call
 
             });
         } else {
-      
+
             callback({
                 message: "The room is not available.",
             });
-     
+
         }
 
     });
