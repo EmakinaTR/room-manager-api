@@ -30,10 +30,13 @@ var getEventsByCalendarId = function getEventsByCalendarId(calendarId, auth, cal
             var eventArr = [];
 
             for (var item of data.items) {
+
+                console.log(item);
+
                 eventArr.push({
                     id: item.id,
                     title: item.summary == undefined ? null : item.summary,
-                    contact: item.organizer.displayName == undefined ? null : item.organizer.displayName,
+                    contact: item.creator.email.includes('gserviceaccount') ? null : item.organizer.displayName,
                     start: item.start.dateTime,
                     end: item.end.dateTime,
                 });
@@ -90,7 +93,7 @@ var createMeeting = function createMeeting(calendarId, minutesBooked, auth, call
                         timeZone: timeZone
                     },
                     summary: "Occupied",
-                    description: "Occupied for " + minutesBooked + " mins"
+                    description: "Occupied for " + minutesBooked + " mins."
                 }
             }, (err, { data }) => {
 
@@ -106,7 +109,7 @@ var createMeeting = function createMeeting(calendarId, minutesBooked, auth, call
                     callback(null, {
                         id: data.id,
                         title: data.summary == undefined ? null : data.summary,
-                        contact: data.organizer.displayName == undefined ? null : data.organizer.displayName,
+                        contact: data.creator.email.includes('gserviceaccount') ? null : item.organizer.displayName,
                         start: data.start.dateTime,
                         end: data.end.dateTime,
                     });
@@ -128,9 +131,7 @@ var createMeeting = function createMeeting(calendarId, minutesBooked, auth, call
 
 function isRoomAvailable(query, callback) {
 
-    var auth = query.auth;
-
-    google.calendar({ version: 'v3', auth }).freebusy.query({
+    google.calendar({ version: 'v3', auth: query.auth }).freebusy.query({
         headers: { "content-type": "application/json" },
         resource: {
             timeMin: query.startTime,
