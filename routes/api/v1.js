@@ -1,13 +1,13 @@
 var express = require('express');
 var router = express.Router({ mergeParams: true });
 
-const database = require('./../../db/MeetingRoomDb');
+const mapper = require('./../../kiosk-calendar-mapper/mapper');
 const calendarService = require('./../../google-calendar-api/calendar_service');
 
 router.route('/schedule/:roomId')
   .get((req, res) => {
 
-    database.getCalendarIdByRoomId(req.params.roomId, function (error, result) {
+    mapper.getCalendarId(req.params.roomId, function (error, result) {
 
       if (error) {
         res.status(400);
@@ -33,7 +33,7 @@ router.route('/schedule/:roomId')
   })
   .post((req, res) => {
 
-    database.getCalendarIdByRoomId(req.params.roomId, function (error, result) {
+    mapper.getCalendarId(req.params.roomId, function (error, result) {
 
       if (error) {
         res.status(400);
@@ -57,6 +57,23 @@ router.route('/schedule/:roomId')
     });
 
   });
+
+router.get('/device/:macId', (req, res) => {
+
+  mapper.getCalendarInfo(req.params.macId, function (error, result) {
+
+    if (error) {
+      res.status(400);
+      res.send(error);
+      return;
+    }
+
+    res.status(200);
+    res.json(result);
+    
+  });
+
+});
 
 router.post('/getCalendars', (req, res) => {
 
