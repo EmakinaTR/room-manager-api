@@ -58,7 +58,7 @@ router.route('/schedule/:roomId')
 
   });
 
-router.post('/device/:macId', (req, res) => {
+router.get('/device/:macId', (req, res) => {
 
   mapper.getCalendarInfo(req.params.macId, function (error, result) {
 

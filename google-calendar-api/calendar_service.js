@@ -140,11 +140,7 @@ function isRoomAvailable(query, callback) {
             items: [{ "id": query.calendarId }]
         }
     }, (err, { data }) => {
-
-        console.log(data);
-
         if (err) {
-            console.log(err.message);
             callback(false);
         } else {
             var busyArray = data.calendars[query.calendarId].busy;
