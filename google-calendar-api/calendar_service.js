@@ -3,12 +3,12 @@ const moment = require('moment');
 
 const timeZone = "Europe/Istanbul";
 
-var getEventsByCalendarId = function getEventsByCalendarId(calendarId, auth, callback) {
+function getEventsByCalendarId(calendarId, auth, callback) {
 
     const dayStartTime = moment({ hour: 0, minute: 0, seconds: 0, milliseconds: 0 });
     const dayEndTime = moment({ hour: 23, minute: 59, seconds: 59, milliseconds: 999 });
 
-    google.calendar({ version: 'v3', auth }).events.get({
+    google.calendar({ version: 'v3', auth }).events.list({
         calendarId: calendarId,
         eventId: '',//it must be empty to get all events.
         timeMin: dayStartTime.toDate(),
@@ -33,9 +33,11 @@ var getEventsByCalendarId = function getEventsByCalendarId(calendarId, auth, cal
                 eventArr.push({
                     id: item.id,
                     title: item.summary == undefined ? null : item.summary,
-                    contact: item.creator.email.includes('gserviceaccount') ? null : item.organizer.displayName,
                     start: item.start.dateTime,
                     end: item.end.dateTime,
+                    contact: (item.extendedProperties == undefined ||
+                        item.extendedProperties.private == undefined ||
+                        item.extendedProperties.private.email == undefined) ? item.creator.email : item.extendedProperties.private.email
                 });
             }
 
@@ -46,7 +48,7 @@ var getEventsByCalendarId = function getEventsByCalendarId(calendarId, auth, cal
 
 };
 
-var getCalendars = function getCalendars(auth, callback) {
+function getCalendars(auth, callback) {
 
     google.calendar({ version: 'v3', auth }).calendarList.list((err, { data }) => {
 
@@ -65,7 +67,7 @@ var getCalendars = function getCalendars(auth, callback) {
 
 };
 
-var createMeeting = function createMeeting(calendarId, minutesBooked, auth, callback) {
+function createMeeting(calendarId, minutesBooked, auth, callback) {
 
     var startTime = moment();
     var endTime = moment(startTime).add(minutesBooked, "minutes");
@@ -90,7 +92,12 @@ var createMeeting = function createMeeting(calendarId, minutesBooked, auth, call
                         timeZone: timeZone
                     },
                     summary: "Occupied",
-                    description: "Occupied for " + minutesBooked + " mins."
+                    description: "Occupied for " + minutesBooked + " mins.",
+                    extendedProperties: {
+                        private: {
+                            "email": "y.yuksel@emakina.com.tr"
+                        }
+                    }
                 }
             }, (err, { data }) => {
 
@@ -106,9 +113,9 @@ var createMeeting = function createMeeting(calendarId, minutesBooked, auth, call
                     callback(null, {
                         id: data.id,
                         title: data.summary == undefined ? null : data.summary,
-                        contact: data.creator.email.includes('gserviceaccount') ? null : item.organizer.displayName,
                         start: data.start.dateTime,
                         end: data.end.dateTime,
+                        contact: data.extendedProperties.private.email
                     });
 
                 }
@@ -152,7 +159,7 @@ function isRoomAvailable(query, callback) {
 }
 
 module.exports = {
-    getEventsByCalendarId: getEventsByCalendarId,
-    getCalendars: getCalendars,
-    createMeeting: createMeeting
+    getEventsByCalendarId,
+    getCalendars,
+    createMeeting
 }
