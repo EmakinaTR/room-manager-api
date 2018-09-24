@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
-const mapper = require('./../../kiosk-calendar-mapper/mapper');
+const calendarMapper = require('./../../mapper/calendarMapper');
 const calendarService = require('./../../google-calendar-api/calendar_service');
 
 router.route('/schedule/:roomId')
     .get((req, res) => {
 
-        mapper.getCalendarId(req.params.roomId, function (error, result) {
+        calendarMapper.getCalendarId(req.params.roomId, function (error, result) {
 
             if (error) {
                 res.status(400);
@@ -32,7 +32,7 @@ router.route('/schedule/:roomId')
     })
     .post((req, res) => {
 
-        mapper.getCalendarId(req.params.roomId, function (error, result) {
+        calendarMapper.getCalendarId(req.params.roomId, function (error, result) {
 
             if (error) {
                 res.status(400);
@@ -40,7 +40,7 @@ router.route('/schedule/:roomId')
                 return;
             }
 
-            calendarService.createMeeting(result, req.body.mins, req.oauth2, function (serviceErr, serviceRes) {
+            calendarService.createMeeting(result, req.body.mins, req.body.userId, req.oauth2, function (serviceErr, serviceRes) {
 
                 if (serviceErr) {
                     res.status(400);

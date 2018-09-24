@@ -1,5 +1,7 @@
 const { google } = require('googleapis');
 const moment = require('moment');
+const userMapper = require('./../mapper/userMapper');
+
 
 const timeZone = "Europe/Istanbul";
 
@@ -67,67 +69,74 @@ function getCalendars(auth, callback) {
 
 };
 
-function createMeeting(calendarId, minutesBooked, auth, callback) {
+function createMeeting(calendarId, minutesBooked, userId, auth, callback) {
 
-    var startTime = moment();
-    var endTime = moment(startTime).add(minutesBooked, "minutes");
+    userMapper.getUserById(userId, function (mapperError, mapperResult) {
 
-    isRoomAvailable({
-        calendarId: calendarId,
-        startTime: startTime.toDate(),
-        endTime: endTime.toDate(),
-        auth: auth
-    }, function (result) {
+        if (mapperError)
+            return callback({ error: mapperError });
 
-        if (result) {
-            google.calendar({ version: 'v3', auth }).events.insert({
-                calendarId: calendarId,
-                resource: {
-                    start: {
-                        dateTime: startTime,
-                        timeZone: timeZone
-                    },
-                    end: {
-                        dateTime: endTime,
-                        timeZone: timeZone
-                    },
-                    summary: "Occupied",
-                    description: "Occupied for " + minutesBooked + " mins.",
-                    extendedProperties: {
-                        private: {
-                            "email": "y.yuksel@emakina.com.tr"
+        var startTime = moment();
+        var endTime = moment(startTime).add(minutesBooked, "minutes");
+
+        isRoomAvailable({
+            calendarId: calendarId,
+            startTime: startTime.toDate(),
+            endTime: endTime.toDate(),
+            auth: auth
+        }, function (result) {
+
+            if (result) {
+                google.calendar({ version: 'v3', auth }).events.insert({
+                    calendarId: calendarId,
+                    resource: {
+                        start: {
+                            dateTime: startTime,
+                            timeZone: timeZone
+                        },
+                        end: {
+                            dateTime: endTime,
+                            timeZone: timeZone
+                        },
+                        summary: "Occupied",
+                        description: "Occupied for " + minutesBooked + " mins.",
+                        extendedProperties: {
+                            private: {
+                                "email": mapperResult.email
+                            }
                         }
                     }
-                }
-            }, (err, { data }) => {
+                }, (err, { data }) => {
 
-                if (err) {
+                    if (err) {
 
-                    callback({
-                        message: err.message,
-                        error: err
-                    });
+                        callback({
+                            message: err.message,
+                            error: err
+                        });
 
-                } else {
+                    } else {
 
-                    callback(null, {
-                        id: data.id,
-                        title: data.summary == undefined ? null : data.summary,
-                        start: data.start.dateTime,
-                        end: data.end.dateTime,
-                        contact: data.extendedProperties.private.email
-                    });
+                        callback(null, {
+                            id: data.id,
+                            title: data.summary == undefined ? null : data.summary,
+                            start: data.start.dateTime,
+                            end: data.end.dateTime,
+                            contact: data.extendedProperties.private.email
+                        });
 
-                }
+                    }
 
-            });
-        } else {
+                });
+            } else {
 
-            callback({
-                message: "The room is not available.",
-            });
+                callback({
+                    message: "The room is not available.",
+                });
 
-        }
+            }
+
+        });
 
     });
 

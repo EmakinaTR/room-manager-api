@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
-const mapper = require('./../../kiosk-calendar-mapper/mapper');
+const calendarMapper = require('./../../mapper/calendarMapper');
 
 router.get('/device/:macId', (req, res) => {
 
-    mapper.getCalendarInfo(req.params.macId, function (error, result) {
+    calendarMapper.getCalendarInfo(req.params.macId, function (error, result) {
 
         if (error) {
             res.status(400);
