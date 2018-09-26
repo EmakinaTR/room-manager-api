@@ -1,6 +1,6 @@
 const { google } = require('googleapis');
 const moment = require('moment');
-
+const userMapper = require('./../mapper/userMapper');
 const timeZone = "Europe/Istanbul";
 
 var getEventsByCalendarId = function getEventsByCalendarId(calendarId, auth, callback) {
@@ -33,7 +33,7 @@ var getEventsByCalendarId = function getEventsByCalendarId(calendarId, auth, cal
                 eventArr.push({
                     id: item.id,
                     title: item.summary == undefined ? null : item.summary,
-                    contact: item.creator.email.includes('gserviceaccount') ? null : item.organizer.displayName,
+                    contact: userMapper.getUsernameByEmail(item.creator.email),
                     start: item.start.dateTime,
                     end: item.end.dateTime,
                 });
@@ -106,7 +106,7 @@ var createMeeting = function createMeeting(calendarId, minutesBooked, auth, call
                     callback(null, {
                         id: data.id,
                         title: data.summary == undefined ? null : data.summary,
-                        contact: data.creator.email.includes('gserviceaccount') ? null : item.organizer.displayName,
+                        contact: userMapper.getUsernameByEmail(item.creator.email),
                         start: data.start.dateTime,
                         end: data.end.dateTime,
                     });
