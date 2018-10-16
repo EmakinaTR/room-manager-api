@@ -31,8 +31,6 @@ var getEventsByCalendarId = function getEventsByCalendarId(calendarId, auth, cal
 
             for (var item of data.items) {
 
-                console.log(item.creator.email);
-
                 eventArr.push({
                     id: item.id,
                     title: item.summary == undefined ? null : item.summary,
