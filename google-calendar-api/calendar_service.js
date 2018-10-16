@@ -30,6 +30,9 @@ var getEventsByCalendarId = function getEventsByCalendarId(calendarId, auth, cal
             var eventArr = [];
 
             for (var item of data.items) {
+
+                console.log(item.creator.email);
+
                 eventArr.push({
                     id: item.id,
                     title: item.summary == undefined ? null : item.summary,
@@ -106,7 +109,7 @@ var createMeeting = function createMeeting(calendarId, minutesBooked, auth, call
                     callback(null, {
                         id: data.id,
                         title: data.summary == undefined ? null : data.summary,
-                        contact: userMapper.getUsernameByEmail(item.creator.email),
+                        contact: userMapper.getUsernameByEmail(data.creator.email),
                         start: data.start.dateTime,
                         end: data.end.dateTime,
                     });
