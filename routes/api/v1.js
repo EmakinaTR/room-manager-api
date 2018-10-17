@@ -75,21 +75,21 @@ router.get('/device/:macId', (req, res) => {
 
 });
 
-router.post('/getCalendars', (req, res) => {
+// router.post('/getCalendars', (req, res) => {
 
-  calendarService.getCalendars(req.oauth2, function (serviceErr, serviceRes) {
+//   calendarService.getCalendars(req.oauth2, function (serviceErr, serviceRes) {
 
-    if (serviceErr) {
-      res.status(400);
-      res.send(serviceErr);
-      return;
-    }
+//     if (serviceErr) {
+//       res.status(400);
+//       res.send(serviceErr);
+//       return;
+//     }
 
-    res.status(200);
-    res.json(serviceRes);
+//     res.status(200);
+//     res.json(serviceRes);
 
-  });
+//   });
 
-});
+// });
 
 module.exports = router;
