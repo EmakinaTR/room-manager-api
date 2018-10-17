@@ -91,7 +91,7 @@ var createMeeting = function createMeeting(calendarId, minutesBooked, auth, call
                         timeZone: timeZone
                     },
                     summary: "Occupied",
-                    description: "Occupied for " + minutesBooked + " mins."
+                    description: "Booked via kiosk app"
                 }
             }, (err, { data }) => {
 
