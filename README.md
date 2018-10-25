@@ -1,10 +1,12 @@
-# Device
+## Device
 
-> ## GET `/api/v1/device/:mac`
-Retrieve the designated room ID of a device.\n
+### GET `/api/v1/device/:mac`
+
+Retrieve the designated room ID of a device.
+
 `:mac` is the hypenated mac ID of the device, i.e.: `XX-XX-XX-XX-XX-XX`
 
-### → `200 OK`
+#### → `200 OK`
 
 ```json
 {
@@ -13,7 +15,7 @@ Retrieve the designated room ID of a device.\n
 }
 ```
 
-### → `400 BAD REQUEST`
+#### → `400 BAD REQUEST`
 
 No device with `:mac` was found on DB.
 
@@ -23,13 +25,15 @@ No device with `:mac` was found on DB.
 }
 ```
 
-# Schedule
+## Schedule
 
-> ## GET `/api/v1/schedule/:id`
-Retrieve the daily schedule of a given room.\n
+### GET `/api/v1/schedule/:id`
+
+Retrieve the daily schedule of a given room.
+
 `:id` is the room ID, obtained via device endpoint.
 
-### → `200 OK`
+#### → `200 OK`
 
 ```json
 [
@@ -50,7 +54,7 @@ Retrieve the daily schedule of a given room.\n
 ]
 ```
 
-### → `400 BAD REQUEST`
+#### → `400 BAD REQUEST`
 
 No room with `:id` was not found on DB.
 
@@ -60,7 +64,7 @@ No room with `:id` was not found on DB.
 }
 ```
 
-> ## POST `/api/v1/schedule/:id`
+### POST `/api/v1/schedule/:id`
 
 Post a booking for a given room.
 
@@ -68,11 +72,11 @@ Post a booking for a given room.
 | ---: | :--- |
 | `mins` | integer |
 
-### → `200 OK`
+#### → `200 OK`
 
 This response has no body.
 
-### → `400 BAD REQUEST`
+#### → `400 BAD REQUEST`
 
 Room may have been simulatenously booked on the calendar.
 
