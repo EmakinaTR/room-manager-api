@@ -1,9 +1,7 @@
 # Device
 
-Used to retrieve the designated room ID of a device.
-
-> ##  `GET /api/v1/device/:mac`
-
+> ## GET `/api/v1/device/:mac`
+Retrieve the designated room ID of a device.\n
 `:mac` is the hypenated mac ID of the device, i.e.: `XX-XX-XX-XX-XX-XX`
 
 ### → `200 OK`
@@ -27,10 +25,8 @@ No device with `:mac` was found on DB.
 
 # Schedule
 
-Used to retrieve the daily schedule of a given room.
-
-> ## `GET /api/v1/schedule/:id`
-
+> ## GET `/api/v1/schedule/:id`
+Retrieve the daily schedule of a given room.\n
 `:id` is the room ID, obtained via device endpoint.
 
 ### → `200 OK`
@@ -64,7 +60,9 @@ No room with `:id` was not found on DB.
 }
 ```
 
-> ## `POST /api/v1/schedule/:id`
+> ## POST `/api/v1/schedule/:id`
+
+Post a booking for a given room.
 
 | Payload | |
 | ---: | :--- |
