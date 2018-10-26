@@ -18,7 +18,7 @@ exports.list = function (req, res) {
 };
 
 exports.create = function (req, res) {
-	KioskService.getCalendarId(req.params.roomId, function (err, id) {
+	KioskService.getCalendarId(req.params.id, function (err, id) {
 		if (err) {
 			return res.status(400).json({ error: err });
 		}
