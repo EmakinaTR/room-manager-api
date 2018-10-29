@@ -7,7 +7,7 @@ exports.list = function (req, res) {
 			return res.status(400).json({ error: err });
 		}
 
-		CalendarService.getEventsByCalendarId(id, req.oauth2, function (error, events) {
+		CalendarService.getEventsByCalendarId(id, req.oauth, function (error, events) {
 			if (error) {
 				return res.status(400).json({ error: error });
 			}
@@ -23,7 +23,7 @@ exports.create = function (req, res) {
 			return res.status(400).json({ error: err });
 		}
 
-		CalendarService.createNewMeeting(id, req.body.mins, req.oauth2, function (error, record) {
+		CalendarService.createNewMeeting(id, req.body.mins, req.oauth, function (error, record) {
 			if (error) {
 				return res.status(400).json({ error: error });
 			}
