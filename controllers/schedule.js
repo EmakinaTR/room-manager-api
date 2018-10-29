@@ -2,7 +2,7 @@ const KioskService = require('../services/kiosk'),
 	CalendarService = require('../services/calendar');
 
 exports.list = function (req, res) {
-	KioskService.getCalendarId(req.params.id, function (err, id) {
+	KioskService.getCalendarByRoomId(req.params.id, function (err, id) {
 		if (err) {
 			return res.status(400).json({ error: err });
 		}
@@ -18,12 +18,12 @@ exports.list = function (req, res) {
 };
 
 exports.create = function (req, res) {
-	KioskService.getCalendarId(req.params.roomId, function (err, id) {
+	KioskService.getCalendarByRoomId(req.params.id, function (err, id) {
 		if (err) {
 			return res.status(400).json({ error: err });
 		}
 
-		CalendarService.createMeeting(id, req.body.mins, req.oauth2, function (error, record) {
+		CalendarService.createNewMeeting(id, req.body.mins, req.oauth2, function (error, record) {
 			if (error) {
 				return res.status(400).json({ error: error });
 			}

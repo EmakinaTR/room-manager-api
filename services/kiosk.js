@@ -1,24 +1,24 @@
 const KioskData = JSON.parse(process.env.KIOSKS);
 
-exports.getCalendarInfo = function (macId, callback) {
-    var kiosk = KioskData.find(k => macId && k.mac === macId);
+exports.getRoomByMacId = function (id, next) {
+    var kiosk = KioskData.find(k => id && k.mac === id);
 
     if (!kiosk) {
-        callback('Device unknown.');
+        next('Device unknown');
     } else {
-        callback(null, {
+        next(null, {
             id: kiosk.id,
             title: kiosk.title
         });
     }
 }
 
-exports.getCalendarId = function (id, callback) {
+exports.getCalendarByRoomId = function (id, next) {
     var kiosk = KioskData.find(k => id && k.id === Number(id));
 
     if (!kiosk) {
-        callback("Room unknown.");
+        next("Room unknown");
     } else {
-        callback(null, kiosk.calendarId);
+        next(null, kiosk.calendarId);
     }
 }
