@@ -1,17 +1,19 @@
 const UserData = JSON.parse(process.env.USERS);
 
-exports.getUserById = function (id, callback) {
+exports.getUserById = function (id, next) {
 	let user = UserData.find(u => id && u.id === id);
 
 	if (!user) {
-		callback('User unknown.');
+		next('User unknown');
 	} else {
-		callback(null, user);
+		next(null, user);
 	}
 };
 
 exports.getUserNameByEmail = function (email) {
-	let user = UserData.find(item => email && item.email == email);
+	let user = UserData.find(u => email && u.email == email);
 
-	return (!user) ? null : user.name;
+	return (!user)
+		? null
+		: user.name;
 };

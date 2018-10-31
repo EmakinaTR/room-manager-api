@@ -1,13 +1,13 @@
-const { google } = require('googleapis');
-const credentials = JSON.parse(process.env.CALENDAR);
-const scopes = ['https://www.googleapis.com/auth/calendar'];
+const { google } = require('googleapis'),
+	credentials = JSON.parse(process.env.CALENDAR),
+	scopes = ['https://www.googleapis.com/auth/calendar'];
 
 module.exports = (req, res, next) => {
 	google.auth.getClient({ credentials, scopes })
-		.then((auth) => {
+		.then(auth => {
 			google.auth.getDefaultProjectId().then(project => {
-				req.oauth2 = auth;
-				req.oauth2_project = project;
+				req.oauth = auth;
+				req.project = project;
 				next();
 			})
 			.catch(err => {
