@@ -56,6 +56,7 @@ typings/
 
 # dotenv environment variables file
 .env
+sample.env
 
 # next.js build output
 .next
@@ -71,3 +72,9 @@ GOOGLE_APPLICATION_CREDENTIALS.json
 # This file holds critical information
 GOOGLE_APPLICATION_CREDENTIALS.json
 .vscode
+
+# Local test file
+testing_node.js
+
+# Yarn lock file 
+yarn.lock
