@@ -1,3 +1,5 @@
+const { google } = require('googleapis');
+
 const UserData = JSON.parse(process.env.USERS);
 
 exports.getUserById = function (id, next) {
@@ -16,4 +18,14 @@ exports.getUserNameByEmail = function (email) {
 	return (!user)
 		? null
 		: user.name;
+};
+
+
+exports.getAllPeople = (auth , next ) => {
+	let people = [];
+
+	// todo: Check error list 
+	//google.people({ version: 'v3', auth })
+
+	return next(null, people);
 };
