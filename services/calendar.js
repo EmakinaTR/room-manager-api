@@ -23,10 +23,18 @@ exports.getEventsByCalendarId = function (id, auth, next) {
 				let events = [];
 
 				for (var item of data.items) {
+					let attendees = item.attendees
+						.map(attendee => {
+							// fix hardcoded
+							return UserService.getUserNameByEmail(attendee)
+						})
+						.filter(e => e);
+
 					events.push({
 						id: item.id,
 						title: (!item.summary) ? null : item.summary,
 						contact: UserService.getUserNameByEmail(item.creator.email),
+						attendees,
 						start: item.start.dateTime,
 						end: item.end.dateTime,
 					});
@@ -103,3 +111,68 @@ exports.createNewMeeting = function (id, mins, auth, next) {
 			});
     });
 };
+
+function room_details( room ){
+	
+	const { id , summary , backgroundColor , foregroundColor } = room;
+    const format = {
+        room_size : /\((\d+)\)/,
+        lifesize_type : /\[(Lifesize(?:[\scloud]+)?)\]/ 
+    };
+	let room_info = {}; 
+	let s = summary;
+    for (const key in format) {
+        if (format.hasOwnProperty(key)) {
+            let m;
+            const regex = format[key];
+            if( (m = s.match(regex)) !== null ) {          
+                room_info[key] = (m[m.length-1]);
+                s = s.replace(regex , "");
+            }
+        }
+	}
+	room_info["full_name"] = s.trim();
+	room_info["name"] = room_info["full_name"].split("-").pop(); 
+	room_info = {...room_info , backgroundColor , foregroundColor };
+	return room_info;
+}
+
+exports.getCalendars = function (auth , next) {
+	const Calender_ids = JSON.parse(process.env.CALENDAR_IDS);
+	//console.log( Calender_ids );
+	//let calendars1 = google.calendar({ version: 'v3', auth });
+	let cals = google.calendar({ version: 'v3', auth }).calendarList.list({},(req,res)=>{
+		//console.log(res.data.items);
+		for( var item of res.data.items){
+			
+			if( Calender_ids.indexOf(item.id) !== -1 ){
+				const room_info = room_details(item)
+				const {full_name , name , room_size, lifesize_type } = room_info;
+				console.log( room_info );
+				console.log( `${full_name}`)
+				console.log( `${name} , ${room_size}, ${lifesize_type }` );	
+			}else{
+				console.log('room yok ', item.id);
+			}
+		}
+	});
+
+	next("calendars");
+}
+
+/*
+	Get all calendar ids for config
+
+ */
+exports.getAllCalendarIds = function (auth , next) {
+	let result = [];
+	let cals = google.calendar({ version: 'v3', auth }).calendarList.list({},(req,res)=>{
+		for( var item of res.data.items){
+			result.push({id:item.id, name:item.summary})
+		}
+		if (!result) {
+			next('Calendars unavailable');
+		}
+		next( null , {result} );
+	});
+}

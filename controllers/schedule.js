@@ -11,7 +11,7 @@ exports.list = function (req, res) {
 			if (error) {
 				return res.status(400).json({ error: error });
 			}
-
+			console.log(events);
 			res.status(200).json(events);
 		});
 	});
@@ -32,3 +32,23 @@ exports.create = function (req, res) {
 		});
 	});
 };
+
+exports.calendars = function( req, res ){
+	CalendarService.getCalendars(req.oauth, function (err, record) {
+		if (err) {
+			return res.status(400).json({ error: err });
+		}
+			res.status(200).json(record);
+	});
+	
+}
+
+exports.getAllCalendarIds = function( req, res ){
+	CalendarService.getAllCalendarIds(req.oauth, function (err, record) {
+		if (err) {
+			return res.status(400).json({ error: err });
+		}
+			res.status(200).json(record);
+	});
+	
+}
